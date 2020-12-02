@@ -2,18 +2,20 @@
 
 import re
 
+
 class PasswordPolicy:
-    def __init__(self, min, max, char):
-        self.min = int(min)
-        self.max = int(max)
+    def __init__(self, min_, max_, char):
+        self.min = int(min_)
+        self.max = int(max_)
         self.char = char
+
 
 class Password:
     def __init__(self, line):
-        range, char, value = line.split()
+        range_, char, value = line.split()
         self.value = value
-        min, max = range.split('-')
-        policy = PasswordPolicy(min, max, char[0])
+        min_, max_ = range_.split('-')
+        policy = PasswordPolicy(min_, max_, char[0])
         self.policy = policy
     
     def is_valid(self):

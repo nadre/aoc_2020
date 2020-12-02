@@ -15,8 +15,14 @@ import numpy as np
 
 
 def main(args):
-    day_1()
-    day_2()
+    # day_1()
+    # day_2()
+    day_3()
+
+
+def day_3():
+    logger.info('~~~ day 3 ~~~')
+
 
 def day_2():
     logger.info('~~~ day 2 ~~~')
@@ -24,15 +30,15 @@ def day_2():
     print(sum([1 for pw in passwords if pw.is_valid()]))
     print(sum([1 for pw in passwords if pw.is_valid2()]))
 
+
 def day_1():
     logger.info('~~~ day 1 ~~~')
     numbers_set = inputs.get_input_as_int_set('1')
-    [print(l, np.prod(l)) for l in itertools.combinations(numbers_set, r=2) if sum(l) == 2020]
-    [print(l, np.prod(l)) for l in itertools.combinations(numbers_set, r=3) if sum(l) == 2020]
+    [print(comb, np.prod(comb)) for comb in itertools.combinations(numbers_set, r=2) if sum(comb) == 2020]
+    [print(comb, np.prod(comb)) for comb in itertools.combinations(numbers_set, r=3) if sum(comb) == 2020]
 
 
 if __name__ == "__main__":
-
     logging.basicConfig()
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
@@ -41,7 +47,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Required positional argument
-    #parser.add_argument("arg", help="Required positional argument")
+    # parser.add_argument("arg", help="Required positional argument")
 
     # Optional argument flag which defaults to False
     parser.add_argument("-f", "--flag", action="store_true", default=False)
