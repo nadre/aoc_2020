@@ -1,20 +1,34 @@
 #!/usr/bin/env python3
 """
-Module Docstring
+2020 AOC Golfing
 """
 
-__author__ = "Your Name"
+__author__ = "Erdan Genc"
 __version__ = "0.1.0"
 __license__ = "MIT"
 
 import argparse
 import logging
+import inputs
+import itertools
+import numpy as np
 
 
 def main(args):
-    """ Main entry point of the app """
-    logger.info("hello world")
-    logger.info(args)
+    day_1()
+    day_2()
+
+def day_2():
+    logger.info('~~~ day 2 ~~~')
+    passwords = inputs.get_passwords_with_policy('2')
+    print(sum([1 for pw in passwords if pw.is_valid()]))
+    print(sum([1 for pw in passwords if pw.is_valid2()]))
+
+def day_1():
+    logger.info('~~~ day 1 ~~~')
+    numbers_set = inputs.get_input_as_int_set('1')
+    [print(l, np.prod(l)) for l in itertools.combinations(numbers_set, r=2) if sum(l) == 2020]
+    [print(l, np.prod(l)) for l in itertools.combinations(numbers_set, r=3) if sum(l) == 2020]
 
 
 if __name__ == "__main__":
@@ -27,7 +41,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Required positional argument
-    parser.add_argument("arg", help="Required positional argument")
+    #parser.add_argument("arg", help="Required positional argument")
 
     # Optional argument flag which defaults to False
     parser.add_argument("-f", "--flag", action="store_true", default=False)
