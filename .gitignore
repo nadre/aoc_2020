@@ -98,3 +98,8 @@ ENV/
 # mypy
 .mypy_cache/
 .vscode/settings.json
+/.idea/aoc_2020.iml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml

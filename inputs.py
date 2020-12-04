@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from classes import Password
+from classes import Password, Passport
 
 
 def get_input_as_list(day: str):
@@ -19,3 +19,12 @@ def get_input_as_int_set(day: str):
 
 def get_passwords_with_policy(day: str):
     return [Password(line) for line in get_input_as_list(day)]
+
+
+def get_tree_map(day: str):
+    return [list(line.rstrip()) for line in get_input_as_list(day)]
+
+
+def get_passports(day: str):
+    filename = f'inputs/{day}.txt'
+    return [Passport(info) for info in open(filename).read().split('\n\n')]

@@ -17,11 +17,40 @@ import numpy as np
 def main(args):
     # day_1()
     # day_2()
-    day_3()
+    # day_3()
+    day_4()
+
+
+def day_4():
+    logger.info('~~~ day 4 ~~~')
+    passports = inputs.get_passports('4')
+    print(sum([1 for pp in passports if pp.is_valid()]))
+    print(sum([1 for pp in passports if pp.is_valid2()]))
 
 
 def day_3():
     logger.info('~~~ day 3 ~~~')
+    tree_map = inputs.get_tree_map('3')
+    max_x = len(tree_map[0]) - 1
+    max_y = len(tree_map) - 1
+    tree_counts = []
+    for step_size_x, step_size_y in [[1, 1], [3, 1], [5, 1], [7, 1], [1, 2]]:
+        tree_count = 0
+        pos_x = 0
+        pos_y = 0
+
+        while pos_y < max_y:
+            pos_x = (pos_x + step_size_x) % (max_x + 1)
+            pos_y = min(pos_y + step_size_y, max_y)
+            val = tree_map[pos_y][pos_x]
+
+            if val == '#':
+                tree_count += 1
+
+        print(step_size_x, step_size_y, tree_count)
+        tree_counts.append(tree_count)
+
+    print(np.prod(tree_counts))
 
 
 def day_2():
