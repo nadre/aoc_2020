@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from classes import Password, Passport
+from classes import Password, Passport, BoardingPass
 
 
 def get_input_as_list(day: str):
@@ -28,3 +28,8 @@ def get_tree_map(day: str):
 def get_passports(day: str):
     filename = f'inputs/{day}.txt'
     return [Passport(info) for info in open(filename).read().split('\n\n')]
+
+
+def get_boarding_passes(day: str):
+    filename = f'inputs/{day}.txt'
+    return [BoardingPass(code) for code in open(filename).read().split('\n')]

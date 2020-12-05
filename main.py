@@ -18,7 +18,19 @@ def main(args):
     # day_1()
     # day_2()
     # day_3()
-    day_4()
+    # day_4()
+    day_5()
+
+
+def day_5():
+    logger.info('~~~ day 5 ~~~')
+    boarding_passes = inputs.get_boarding_passes('5')
+    ids = [bp.id for bp in boarding_passes]
+    ids.sort()
+    print(max(ids))
+    for i, id_ in enumerate(ids[:-1]):
+        if id_ + 1 != ids[i+1]:
+            print(id_ + 1)
 
 
 def day_4():

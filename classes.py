@@ -3,6 +3,31 @@
 import re
 
 
+class BoardingPass:
+    def __init__(self, code):
+        self.code = code
+        self._set_row()
+        self._set_col()
+        self._set_id()
+
+    def _set_row(self):
+        self.row_code = self.code[:-3]\
+            .replace('F', '0')\
+            .replace('B', '1')
+
+        self.row = int(self.row_code, 2)
+
+    def _set_col(self):
+        self.col_code = self.code[-3:]\
+            .replace('R', '1')\
+            .replace('L', '0')
+
+        self.col = int(self.col_code, 2)
+
+    def _set_id(self):
+        self.id = self.row * 8 + self.col
+
+
 class PasswordPolicy:
     def __init__(self, min_, max_, char):
         self.min = int(min_)
