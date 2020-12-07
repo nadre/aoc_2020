@@ -3,6 +3,94 @@
 import re
 
 
+class BagRules:
+    def __init__(self, rules):
+        self.rules = rules
+        self.map = {}
+        self.inverse_map = {}
+        for line in self.rules.split('\n'):
+            key, values = line.split(' contain ')
+            key_bag_type = key.rstrip('.').rstrip('bag').rstrip('bags').rstrip(' ')
+
+            if values == 'no other bags.':
+                self.map[key_bag_type] = [('X', 1)]
+                continue
+
+            for val in values.split(', '):
+                val_bag = val.rstrip('.').rstrip('bag').rstrip('bags').rstrip(' ')
+                bag_values = val_bag.split()
+                num_bags = int(bag_values[0])
+                bag_type = ' '.join(bag_values[1:])
+
+                if bag_type in self.inverse_map:
+                    self.inverse_map[bag_type].append(key_bag_type)
+                else:
+                    self.inverse_map[bag_type] = [key_bag_type]
+
+                if key_bag_type in self.map:
+                    self.map[key_bag_type].append((bag_type, num_bags))
+                else:
+                    self.map[key_bag_type] = [(bag_type, num_bags)]
+
+    def get_count(self, key):
+        count = 1
+        for node, value in self.map[key]:
+            if node != 'X':
+                count += value * self.get_count(node)
+        return count
+
+    def get_inverse_count(self, key):
+        bags_that_can_contain = set(self.inverse_map[key])
+
+        while True:
+            new_bags = set()
+            for bag_type in bags_that_can_contain:
+                if bag_type not in self.inverse_map:
+                    continue
+                for new_bag_type in self.inverse_map[bag_type]:
+                    if new_bag_type in bags_that_can_contain:
+                        continue
+                    else:
+                        new_bags.add(new_bag_type)
+
+            if len(new_bags) == 0:
+                break
+            else:
+                bags_that_can_contain = bags_that_can_contain.union(new_bags)
+
+        return len(bags_that_can_contain)
+                    
+
+class Form:
+    def __init__(self, form_string):
+        self.question_answered_yes = set()
+        for line in form_string.split('\n'):
+            for char in line.strip():
+                self.question_answered_yes.add(char)
+
+
+class Form2:
+    def __init__(self, form_string):
+        self.question_answered_yes = {}
+        self.count = 0
+        for line in form_string.split('\n'):
+            self.count += 1
+            for char in line.strip():
+                count = 1
+                if char not in self.question_answered_yes:
+                    pass
+                else:
+                    count += self.question_answered_yes[char]
+                self.question_answered_yes[char] = count
+
+    def get_counts(self):
+        counts = 0
+        for value in self.question_answered_yes.values():
+            if value == self.count:
+                counts += 1
+        return counts
+
+
 class BoardingPass:
     def __init__(self, code):
         self.code = code

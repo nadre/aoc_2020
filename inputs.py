@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
-from classes import Password, Passport, BoardingPass
+from classes import Password, Passport, BoardingPass, Form, Form2, BagRules
+
+
+def get_bag_rules(day: str):
+    filename = f'inputs/{day}.txt'
+    return BagRules(open(filename).read())
 
 
 def get_input_as_list(day: str):
@@ -33,3 +38,13 @@ def get_passports(day: str):
 def get_boarding_passes(day: str):
     filename = f'inputs/{day}.txt'
     return [BoardingPass(code) for code in open(filename).read().split('\n')]
+
+
+def get_forms(day: str):
+    filename = f'inputs/{day}.txt'
+    return [Form(info) for info in open(filename).read().split('\n\n')]
+
+
+def get_forms2(day: str):
+    filename = f'inputs/{day}.txt'
+    return [Form2(info) for info in open(filename).read().split('\n\n')]

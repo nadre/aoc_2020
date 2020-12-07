@@ -19,7 +19,24 @@ def main(args):
     # day_2()
     # day_3()
     # day_4()
-    day_5()
+    # day_5()
+    # day_6()
+    day_7()
+
+
+def day_7():
+    logger.info('~~~ day 7 ~~~')
+    bag_rules = inputs.get_bag_rules('7')
+    print(bag_rules.get_inverse_count('shiny gold'))
+    print(bag_rules.get_count('shiny gold') - 1)
+
+
+def day_6():
+    logger.info('~~~ day 6 ~~~')
+    forms = inputs.get_forms('6')
+    print(sum([len(f.question_answered_yes) for f in forms]))
+    forms = inputs.get_forms2('6')
+    print(sum([f.get_counts() for f in forms]))
 
 
 def day_5():
