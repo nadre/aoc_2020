@@ -1,7 +1,134 @@
 #!/usr/bin/env python3
 
 import re
+import itertools
 
+
+class AdapterBag:
+    def __init__(self, int_set: set):
+        self.adapters = int_set
+        self.adapters_sorted = list(int_set)
+        self.adapters_sorted.sort()
+
+    def get_answer1(self):
+        jumps = [3]
+        tmp_adapters = [0] + self.adapters_sorted
+        for i, adapter in enumerate(tmp_adapters):
+            if i + 1 == len(tmp_adapters):
+                break
+            jumps.append(tmp_adapters[i+1] - adapter)
+        return jumps.count(1) * jumps.count(3)
+
+    def get_answer2(self):
+        tmp_adapters = [0] + self.adapters_sorted
+        num_paths = [0] * len(tmp_adapters)
+        num_paths[0] = 1
+        for i, adapter in enumerate(tmp_adapters):
+            j = i - 1
+            while j >= 0 and adapter - tmp_adapters[j] <= 3:
+                num_paths[i] += num_paths[j]
+                j -= 1
+        return num_paths[-1]
+
+
+
+
+
+def pairwise(iterable):
+    it = iter(iterable)
+    a = next(it, None)
+
+    for b in it:
+        yield a, b
+        a = b
+
+
+class XMASSystem:
+    def __init__(self, numbers, preamble_length):
+        self.numbers = numbers
+        self.preamble_length = preamble_length
+        self.position = 0
+
+    def get_valid_numbers(self):
+        preamble_numbers = self.numbers[ self.position:self.position + self.preamble_length]
+        return [sum(x) for x in itertools.combinations(preamble_numbers, 2)]
+
+    def get_invalid_number(self):
+        while True:
+            current_number = self.numbers[self.preamble_length+self.position]
+            if current_number in self.get_valid_numbers():
+                self.position += 1
+            else:
+                return current_number
+
+    def get_range(self, expected_sum):
+        for range_length in range(2, len(self.numbers)-1):
+            for pos in range(len(self.numbers)):
+                current_sum = sum(self.numbers[pos:pos+range_length])
+                if current_sum == expected_sum:
+                    return self.numbers[pos:pos + range_length]
+
+
+class InstructionSet:
+    def __init__(self, instructions_str):
+        self.instructions_str = instructions_str
+
+        self.instructions = []
+        self.visited_positions = []
+        self.current_pos = 0
+        self.accumulator = 0
+
+        self.repair_pos = 0
+        for line in instructions_str:
+            op, arg = line.split()
+            self.instructions.append((op, int(arg)))
+        self.num_instructions = len(self.instructions)
+        self.original_instructions = [l for l in self.instructions]
+
+    def run(self):
+        while True:
+            if self.current_pos in self.visited_positions:
+                return False
+            if self.current_pos == self.num_instructions:
+                return self.accumulator
+            self.step()
+
+    def run_and_repair(self):
+        terminated = False
+        while not terminated:
+            terminated = self.run()
+            self.repair_step()
+
+        return terminated
+
+    def repair_step(self):
+        self.instructions = [l for l in self.original_instructions]
+        self.visited_positions = []
+        self.current_pos = 0
+        self.accumulator = 0
+        op, arg = self.instructions[self.repair_pos]
+        if op == 'nop':
+            op = 'jmp'
+        elif op == 'jmp':
+            op = 'nop'
+        self.instructions[self.repair_pos] = (op, arg)
+        # print(self.repair_pos, self.num_instructions)
+        self.repair_pos += 1
+
+    def step(self):
+        self.visited_positions.append(self.current_pos)
+        op, arg = self.instructions[self.current_pos]
+
+        if op == 'nop':
+            self.current_pos += 1
+            return
+        elif op == 'acc':
+            self.accumulator += arg
+            self.current_pos += 1
+            return
+        elif op == 'jmp':
+            self.current_pos += arg
+            return
 
 class BagRules:
     def __init__(self, rules):

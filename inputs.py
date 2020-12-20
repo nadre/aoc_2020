@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-from classes import Password, Passport, BoardingPass, Form, Form2, BagRules
+from classes import Password, Passport, BoardingPass, Form, Form2, BagRules, InstructionSet, XMASSystem, AdapterBag
+
+
+def get_adapter_bag(day: str):
+    return AdapterBag(get_input_as_int_set(day))
 
 
 def get_bag_rules(day: str):
@@ -48,3 +52,12 @@ def get_forms(day: str):
 def get_forms2(day: str):
     filename = f'inputs/{day}.txt'
     return [Form2(info) for info in open(filename).read().split('\n\n')]
+
+
+def get_instruction_set(day: str):
+    filename = f'inputs/{day}.txt'
+    return InstructionSet(open(filename).read().split('\n'))
+
+
+def get_xms_system(day: str, preamble_length: int):
+    return XMASSystem(get_input_as_int_list(day), preamble_length)

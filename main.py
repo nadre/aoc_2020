@@ -12,6 +12,7 @@ import logging
 import inputs
 import itertools
 import numpy as np
+from collections import Counter
 
 
 def main(args):
@@ -21,7 +22,145 @@ def main(args):
     # day_4()
     # day_5()
     # day_6()
-    day_7()
+    # day_7()
+    # day_8()
+    # day_9()
+    # day_10()
+    # day_11_1()
+    # day_11_2()
+    # day_13_1()
+    day_13_2()
+
+
+def day_11_2():
+    logger.info('~~~ day 11 part 2~~~')
+    seats = inputs.get_input_as_list('11')
+    seats = [[c for c in s] for s in seats]
+    seats = np.array(seats)
+
+    directions = [
+        (0, 1),
+        (1, 0),
+        (0, -1),
+        (-1, 0),
+        (1, 1),
+        (-1, 1),
+        (1, -1),
+        (-1, -1),
+    ]
+
+    change = True
+    while change:
+        change = False
+        seat_status = {}
+        for x in range(0, seats.shape[0]):
+            for y in range(0, seats.shape[1]):
+
+                val = seats[x, y]
+                if val == '.':
+                    continue
+
+                seen_seats = []
+                for x_, y_ in directions:
+                    i = x + x_
+                    j = y + y_
+                    while 0 <= i < seats.shape[0] and 0 <= j < seats.shape[1]:
+                        seat = seats[i, j]
+                        if seat == '#' or seat == 'L':
+                            seen_seats.append(seat)
+                            break
+                        i += x_
+                        j += y_
+                c = Counter(seen_seats)
+                seat_status[(x, y)] = val, c['#']
+
+        for (x, y), (val, taken_seats) in seat_status.items():
+            if val == 'L' and taken_seats == 0:
+                seats[x, y] = '#'
+                change = True
+            elif val == '#' and taken_seats >= 5:
+                seats[x, y] = 'L'
+                change = True
+
+        print('\n'.join(''.join(s) for s in seats).count('#'))
+
+
+def day_11_1():
+    logger.info('~~~ day 11 ~~~')
+    seats = inputs.get_input_as_list('11')
+    seats = [[c for c in s] for s in seats]
+    seats = np.array(seats)
+    seats = np.pad(seats, [(1, 1), (1, 1)])
+    seats = np.where(seats == '.', 0, seats)
+
+    change = True
+    while change:
+        change = False
+        seat_status = {}
+        for x in range(1, seats.shape[0] - 1):
+            for y in range(1, seats.shape[1] - 1):
+                nb = np.copy(seats[x - 1:x + 2, y - 1:y + 2])
+                nb[1, 1] = 'X'
+                nb = nb.flatten()
+                val = seats[x, y]
+                c = Counter(nb)
+                seat_status[(x, y)] = val, c['#']
+
+        for (x, y), (val, taken_seats) in seat_status.items():
+            if val == 'L' and taken_seats == 0:
+                seats[x, y] = '#'
+                change = True
+            elif val == '#' and taken_seats >= 4:
+                seats[x, y] = 'L'
+                change = True
+
+        print('\n'.join(''.join(s) for s in seats).count('#'))
+
+
+def day_13_1():
+    logger.info('~~~ day 13 part 1 ~~~')
+    timestamp, bus_ids = inputs.get_input_as_list('13')
+    timestamp = int(timestamp)
+    bus_ids = [int(bid) for bid in bus_ids.split(',') if bid != 'x']
+    bus_numbers = {bid - timestamp % bid: bid for bid in bus_ids}
+    min_d = min(bus_numbers.keys())
+    print(min_d * bus_numbers[min_d])
+
+
+def day_13_2():
+    logger.info('~~~ day 13 part 2 ~~~')
+    _, bus_ids = inputs.get_input_as_list('13')
+    bus_numbers = {i: int(bid) for i, bid in enumerate(bus_ids.split(',')) if bid != 'x'}
+    timestamp = 1
+    prod = 1
+    for i, (time_diff, bid) in enumerate(bus_numbers.items()):
+        while (timestamp + time_diff) % bid != 0:
+            timestamp += prod
+        prod *= bid
+    print(timestamp)
+
+
+def day_10():
+    logger.info('~~~ day 10 part 2 ~~~')
+    ab = inputs.get_adapter_bag('10')
+    print(ab.get_answer1())
+    print(ab.get_answer2())
+
+
+def day_9():
+    logger.info('~~~ day 9 ~~~')
+    xms_system = inputs.get_xms_system('9', 25)
+    # xms_system = inputs.get_xms_system('9-test', 5)
+    invalid_number = xms_system.get_invalid_number()
+    print(invalid_number)
+    r = xms_system.get_range(invalid_number)
+    print(sum([min(r), max(r)]))
+
+
+def day_8():
+    logger.info('~~~ day 8 ~~~')
+    instruction_set = inputs.get_instruction_set('8')
+    print(instruction_set.run_and_repair())
 
 
 def day_7():
@@ -46,7 +185,7 @@ def day_5():
     ids.sort()
     print(max(ids))
     for i, id_ in enumerate(ids[:-1]):
-        if id_ + 1 != ids[i+1]:
+        if id_ + 1 != ids[i + 1]:
             print(id_ + 1)
 
 
