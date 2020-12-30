@@ -28,8 +28,58 @@ def main(args):
     # day_10()
     # day_11_1()
     # day_11_2()
+    # day_12_1()
+    # day_12_2()
     # day_13_1()
-    day_13_2()
+    # day_13_2()
+    # day_14_1()
+    # day_14_2()
+    day_15(2020)
+    day_15(30000000)
+
+
+def day_15(last_turn):
+    logger.info('~~~ day 15 ~~~')
+    # input_ = '0,3,6'
+    input_ = '2,0,1,7,4,14,18'
+    turn_num = {i: int(v) for i, v in enumerate(input_.split(','))}
+    num_turn = {int(v): [i] for i, v in enumerate(input_.split(','))}
+    turn = max(turn_num.keys())
+    while turn != last_turn - 1:
+        turn += 1
+        last_num = turn_num[turn - 1]
+        spoken_at_turns = num_turn[last_num]
+        speak_num = 0
+        if len(spoken_at_turns) > 1:
+            speak_num = spoken_at_turns[-1] - spoken_at_turns[-2]
+        turn_num[turn] = speak_num
+        if speak_num in num_turn:
+            l = num_turn[speak_num]
+        else:
+            l = []
+            num_turn[speak_num] = l
+        l.append(turn)
+    print(speak_num)
+
+
+def day_14_1():
+    logger.info('~~~ day 14 part 1~~~')
+    mms = inputs.get_memory_maps('14')
+    all_values = {k: v for d in mms for k, v in d.get_saved_values().items()}
+    print(sum(all_values.values()))
+
+
+def day_14_2():
+    logger.info('~~~ day 14 part 2~~~')
+    mms = inputs.get_memory_maps2('14')
+    d = {}
+    for mm in mms:
+        for address, value in mm.get_all_addresses_with_values().items():
+            if address in d:
+                print(d[address], value)
+            d[address] = value
+    print(d)
+    print(sum(d.values()))
 
 
 def day_11_2():
@@ -83,6 +133,92 @@ def day_11_2():
                 change = True
 
         print('\n'.join(''.join(s) for s in seats).count('#'))
+
+
+def day_12_1():
+    logger.info('~~~ day 12 1~~~')
+    instructions = inputs.get_input_as_list('12')
+    instructions = [(i[0].lower(), int(i[1:])) for i in instructions]
+    current_direction = 'e'
+    directions = ['n', 'e', 's', 'w']
+    current_position = {d: 0 for d in directions}
+    for i, (instruction, value) in enumerate(instructions):
+        if instruction in directions:
+            current_position[instruction] += value
+        elif instruction == 'f':
+            current_position[current_direction] += value
+        elif instruction == 'r':
+            turns = int(value / 90)
+            idx = directions.index(current_direction)
+            new_idx = (idx + turns) % 4
+            current_direction = directions[new_idx]
+        elif instruction == 'l':
+            turns = int(value / 90)
+            idx = directions.index(current_direction)
+            current_direction = directions[idx - turns]
+        else:
+            print('whoops', i, instruction, value)
+
+    print(abs(current_position['n'] - current_position['s']) + abs(current_position['e'] - current_position['w']))
+
+
+def day_12_2():
+    logger.info('~~~ day 12 ~~~')
+    instructions = inputs.get_input_as_list('12')
+    instructions = [(i[0].lower(), int(i[1:])) for i in instructions]
+    current_direction = 'e'
+    directions = ['n', 'e', 's', 'w']
+    rel_x = rel_y = 0
+    wp_x = 10
+    wp_y = 1
+    for i, (instruction, value) in enumerate(instructions):
+        print(i + 1, instruction, current_direction)
+        print('wp', wp_x, wp_y)
+        print('xy', rel_x, rel_y)
+        new_direction = False
+        if instruction == 'n':
+            wp_y += value
+        elif instruction == 's':
+            wp_y -= value
+        elif instruction == 'e':
+            wp_x += value
+        elif instruction == 'w':
+            wp_x -= value
+        elif instruction == 'f':
+            rel_x += value * wp_x
+            rel_y += value * wp_y
+        elif instruction == 'r':
+            turns = int(value / 90)
+            idx = directions.index(current_direction)
+            new_idx = (idx + turns) % 4
+            new_direction = directions[new_idx]
+        elif instruction == 'l':
+            turns = int(value / 90)
+            idx = directions.index(current_direction)
+            new_direction = directions[idx - turns]
+
+        wp_x_tmp = wp_x
+        wp_y_tmp = wp_y
+        if new_direction:
+            print('->', new_direction)
+
+        if new_direction == 'n':
+            wp_x = -wp_y_tmp
+            wp_y = wp_x_tmp
+        elif new_direction == 's':
+            wp_x = wp_y_tmp
+            wp_y = -wp_x_tmp
+        elif new_direction == 'e':
+            pass
+        elif new_direction == 'w':
+            wp_x = -wp_x_tmp
+            wp_y = -wp_y_tmp
+
+        print('#', current_direction)
+        print('wp', wp_x, wp_y)
+        print('xy', rel_x, rel_y)
+
+    print(abs(rel_x) + abs(rel_y))
 
 
 def day_11_1():

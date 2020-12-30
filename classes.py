@@ -2,6 +2,74 @@
 
 import re
 import itertools
+from Powerset import powerset
+
+
+class MemoryMap2:
+    def __init__(self, memory_map_str: str):
+        self.memory_map_lines = memory_map_str.split('\n')
+        self.mask = {i: val for i, val in enumerate(self.memory_map_lines[0][::-1]) if val != '0'}
+        self.values = [self.get_value(line) for line in self.memory_map_lines[1:]]
+
+    def get_all_masked_addresses(self, address):
+        masked_address = self.get_masked_adress(address, self.mask)
+        zero_address = [v if v != 'X' else '0' for v in masked_address]
+        floating_bits = [i for i, v in enumerate(masked_address) if v == 'X']
+        for subset in powerset(floating_bits):
+            new_mask = zero_address.copy()
+            for i in subset:
+                new_mask[i] = '1'
+            a = ''.join(new_mask)
+            b = int(a, 2)
+            yield b
+
+    def get_all_addresses_with_values(self):
+        result = {}
+        for address, value in self.values:
+            for masked_address in self.get_all_masked_addresses(address):
+                result[masked_address] = value
+        return result
+
+    @staticmethod
+    def get_value(line):
+        address, value = line.split(' = ')
+        value = int(value)
+        address = int(re.findall('\\d+', address)[0])
+        return address, value
+
+    @staticmethod
+    def get_masked_adress(address, mask):
+        new_address = list(format(int(address), '036b'))
+        new_address.reverse()
+        for i, val in mask.items():
+            new_address[i] = str(val)
+        new_address.reverse()
+        return new_address
+
+
+class MemoryMap:
+    def __init__(self, memory_map_str: str):
+        self.memory_map_lines = memory_map_str.split('\n')
+        self.mask = {i: val for i, val in enumerate(self.memory_map_lines[0][::-1]) if val != 'X'}
+        self.values = [self.get_value(line) for line in self.memory_map_lines[1:]]
+
+    @staticmethod
+    def get_value(line):
+        address, value = line.split(' = ')
+        value = format(int(value), '036b')
+        address = int(re.findall('\\d+', address)[0])
+        return address, value
+
+    def get_saved_values(self):
+        saved_values = {}
+        for address, value in self.values:
+            new_value = list(value)
+            new_value.reverse()
+            for i, val in self.mask.items():
+                new_value[i] = val
+            new_value.reverse()
+            saved_values[address] = int(''.join(new_value), 2)
+        return saved_values
 
 
 class AdapterBag:
@@ -16,7 +84,7 @@ class AdapterBag:
         for i, adapter in enumerate(tmp_adapters):
             if i + 1 == len(tmp_adapters):
                 break
-            jumps.append(tmp_adapters[i+1] - adapter)
+            jumps.append(tmp_adapters[i + 1] - adapter)
         return jumps.count(1) * jumps.count(3)
 
     def get_answer2(self):
@@ -29,9 +97,6 @@ class AdapterBag:
                 num_paths[i] += num_paths[j]
                 j -= 1
         return num_paths[-1]
-
-
-
 
 
 def pairwise(iterable):
@@ -50,21 +115,21 @@ class XMASSystem:
         self.position = 0
 
     def get_valid_numbers(self):
-        preamble_numbers = self.numbers[ self.position:self.position + self.preamble_length]
+        preamble_numbers = self.numbers[self.position:self.position + self.preamble_length]
         return [sum(x) for x in itertools.combinations(preamble_numbers, 2)]
 
     def get_invalid_number(self):
         while True:
-            current_number = self.numbers[self.preamble_length+self.position]
+            current_number = self.numbers[self.preamble_length + self.position]
             if current_number in self.get_valid_numbers():
                 self.position += 1
             else:
                 return current_number
 
     def get_range(self, expected_sum):
-        for range_length in range(2, len(self.numbers)-1):
+        for range_length in range(2, len(self.numbers) - 1):
             for pos in range(len(self.numbers)):
-                current_sum = sum(self.numbers[pos:pos+range_length])
+                current_sum = sum(self.numbers[pos:pos + range_length])
                 if current_sum == expected_sum:
                     return self.numbers[pos:pos + range_length]
 
@@ -130,6 +195,7 @@ class InstructionSet:
             self.current_pos += arg
             return
 
+
 class BagRules:
     def __init__(self, rules):
         self.rules = rules
@@ -186,7 +252,7 @@ class BagRules:
                 bags_that_can_contain = bags_that_can_contain.union(new_bags)
 
         return len(bags_that_can_contain)
-                    
+
 
 class Form:
     def __init__(self, form_string):
@@ -226,15 +292,15 @@ class BoardingPass:
         self._set_id()
 
     def _set_row(self):
-        self.row_code = self.code[:-3]\
-            .replace('F', '0')\
+        self.row_code = self.code[:-3] \
+            .replace('F', '0') \
             .replace('B', '1')
 
         self.row = int(self.row_code, 2)
 
     def _set_col(self):
-        self.col_code = self.code[-3:]\
-            .replace('R', '1')\
+        self.col_code = self.code[-3:] \
+            .replace('R', '1') \
             .replace('L', '0')
 
         self.col = int(self.col_code, 2)
@@ -257,11 +323,11 @@ class Password:
         min_, max_ = range_.split('-')
         policy = PasswordPolicy(min_, max_, char[0])
         self.policy = policy
-    
+
     def is_valid(self):
         char_frequency = self.value.count(self.policy.char)
         return self.policy.min <= char_frequency <= self.policy.max
-    
+
     def is_valid2(self):
         positions = [pos.start() + 1 for pos in re.finditer(self.policy.char, self.value)]
         count = 0

@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 
-from classes import Password, Passport, BoardingPass, Form, Form2, BagRules, InstructionSet, XMASSystem, AdapterBag
+from classes import Password, Passport, BoardingPass, Form, Form2, BagRules, \
+    InstructionSet, XMASSystem, AdapterBag, MemoryMap, MemoryMap2
+
+
+def get_memory_maps2(day: str):
+    filename = f'inputs/{day}.txt'
+    return [MemoryMap2(mm.strip()) for mm in open(filename).read().split('mask = ') if len(mm) > 0]
+
+
+def get_memory_maps(day: str):
+    filename = f'inputs/{day}.txt'
+    return [MemoryMap(mm.strip()) for mm in open(filename).read().split('mask = ') if len(mm) > 0]
 
 
 def get_adapter_bag(day: str):
